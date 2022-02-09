@@ -20,14 +20,11 @@ if __name__ == '__main__':
         print(f"arg known must be of length 5 but was of length {len(known)}")
         exit(1)
 
-    # print(f"{known=} {included=} {excluded=}")
-
     # filter possible words
     chars = set('abcdefghijklmnopqrstuvwxyz')
 
     re_str = known
     chars_ = ''.join(list(chars - excluded))
-    print(f"{chars_=}")
     re_str = known.replace('.', f'[{chars_}]')
     r = re.compile(re_str)
     matches = list(filter(r.match, words))
