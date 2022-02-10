@@ -8,6 +8,6 @@ Possible words list from [3b1b](https://github.com/3b1b/videos/tree/master/_2022
 - Included: Characters that are included in the word but in unkown location in the form `xyz`.
 - Excluded: Characters that are excluded in the word in the form `xyz`.
 
-Example run:
+Example run with `o` locked in, `r` in an unknown location, and the letters `canepilt` not contained.
 
 `python helper.py ---o- r canepilt`
