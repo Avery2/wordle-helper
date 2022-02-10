@@ -17,7 +17,7 @@ if __name__ == '__main__':
     excluded = set(sys.argv[3])
 
     if len(known) != 5:
-        print(f"arg known must be of length 5 but was of length {len(known)}")
+        print(f"arg known ({known=} must be of length 5 but was of length {len(known)}")
         exit(1)
 
     # filter possible words
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     re_str = known
     chars_ = ''.join(list(chars - excluded))
-    re_str = known.replace('.', f'[{chars_}]')
+    re_str = known.replace('-', f'[{chars_}]')
     r = re.compile(re_str)
     matches = list(filter(r.match, words))
     matches = list(filter(lambda x: False not in [e in x for e in included], matches))
