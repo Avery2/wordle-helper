@@ -21,15 +21,17 @@ if __name__ == '__main__':
         exit(1)
 
     # filter possible words
-    chars = set('abcdefghijklmnopqrstuvwxyz')
-
-    re_str = known
-    chars_ = ''.join(list(chars - excluded))
-    re_str = known.replace('-', f'[{chars_}]')
+    all_possible_chars = set('abcdefghijklmnopqrstuvwxyz')
+    # exclude excluded characters
+    possible_chars = ''.join(list(all_possible_chars - excluded))
+    re_str = known.replace('-', f'[{possible_chars}]')
     r = re.compile(re_str)
+
     matches = list(filter(r.match, words))
+    # require included characters
     matches = list(filter(lambda x: False not in [e in x for e in included], matches))
     
+    # output to user
     print(f"Show {len(matches)} possible words? [y/n] ", end='')
     if input().strip().lower() in ('yes', 'y'):
         print(*matches, sep="\n")
