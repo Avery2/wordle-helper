@@ -25,7 +25,7 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
 def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions):
 
     # exclude excluded characters
-    matches = list(filter(match_known_positions_exclude_characters(known_positions), possible_words))
+    matches = list(filter(match_known_positions_exclude_characters(known_positions, excluded_characters), possible_words))
     # require included characters
     matches = list(filter(lambda x: uses_included_characters(x, included_characters), matches))
     # filter excluded positions
