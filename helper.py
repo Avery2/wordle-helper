@@ -17,7 +17,7 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
     """returns function that takes a word and returns if it uses the known positions and doesn't use the excluded characters"""
     # filter possible words
     all_possible_chars = set('abcdefghijklmnopqrstuvwxyz')
-    possible_chars = ''.join(list(all_possible_chars - excluded_characters))
+    possible_chars = ''.join(list(all_possible_chars - set(excluded_characters)))
     re_str = known_positions.replace('-', f'[{possible_chars}]')
     r = re.compile(re_str)
     return r.match
@@ -55,8 +55,8 @@ if __name__ == '__main__':
         exit(1)
 
     known_positions = sys.argv[1]
-    included_characters = set(sys.argv[2])
-    excluded_characters = set(sys.argv[3])
+    included_characters = sys.argv[2]
+    excluded_characters = sys.argv[3]
     excluded_positions = None
 
     if len(sys.argv) > 4:
