@@ -22,8 +22,8 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
     r = re.compile(re_str)
     return r.match
 
-def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions):
-
+def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions=None):
+    """Returns filtered possible words using parameters"""
     # exclude excluded characters and require known positions
     matches = list(filter(match_known_positions_exclude_characters(known_positions, excluded_characters), possible_words))
     # require included characters
