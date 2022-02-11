@@ -8,13 +8,19 @@ if __name__ == '__main__':
         words = [x.strip() for x in possibleWords.readlines()]
 
     # command line parsing
-    if len(sys.argv) != 4:
+    if len(sys.argv) < 4:
         print("usage: helper.py known_positions included_characters excluded_characters")
         exit(1)
 
     known_positions = sys.argv[1]
     included_characters = set(sys.argv[2])
     excluded_characters = set(sys.argv[3])
+
+    if len(sys.argv) > 4:
+        excluded_positions = sys.argv[4]
+        if excluded_positions.count(";") != 4:
+            print(f"arg excluded_positions ({excluded_positions}) must be of the form x;y;x;; with exactly 4 ;")
+            exit(1)
 
     if len(known_positions) != 5:
         print(f"arg known_positions ({known_positions=} must be of length 5 but was of length {len(known_positions)}")
