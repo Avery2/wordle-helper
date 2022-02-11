@@ -23,7 +23,11 @@ Example of wordle and matching command:
 
 <img src="https://user-images.githubusercontent.com/53503018/153552829-753d0ffd-82ac-4fc2-8e89-19a4a796104c.jpeg" width="50%"></img>
 
-`python helper.py ----- cre an c,er,r,c,e`
+```
+❯ python helper.py ----- cre an c,er,r,c,e
+Show 1 possible words? [y/n] y
+ulcer
+```
 
 ```
 ❯ python play.py
