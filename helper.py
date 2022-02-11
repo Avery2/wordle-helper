@@ -27,6 +27,8 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
 
 def filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions=None, possible_words=None):
     """Returns filtered possible words using parameters"""
+    if excluded_positions:
+        excluded_positions = excluded_positions.split(',')
 
     if possible_words == None:
         with open("possible_words.txt") as possible_words_file:
@@ -73,7 +75,6 @@ if __name__ == '__main__':
         if excluded_positions.count(",") != 4:
             print(f"arg excluded_positions ({excluded_positions}) must be of the form x,y,x,, with exactly 4 ,")
             exit(1)
-        excluded_positions = excluded_positions.split(',')
 
     if len(known_positions) != 5:
         print(f"arg known_positions ({known_positions=} must be of length 5 but was of length {len(known_positions)}")

@@ -19,7 +19,7 @@ def known_positions_from_guess(guess):
         if next_marked:
             acc += c
             next_marked = False
-        else:
+        elif c not in ('*', '_'):
             acc += '-'
         next_marked = c == '*'
     return acc
@@ -29,7 +29,7 @@ def excluded_characters_from_guess(guess):
     acc = ''
     next_marked = False
     for c in guess:
-        if not next_marked:
+        if not next_marked and c not in ('*', '_'):
             acc += c
             next_marked = False
         next_marked = c in ('*', '_')
@@ -45,6 +45,7 @@ def included_characters_from_guess(guess):
 
 def excluded_positions_from_guess(guess):
     guess = guess.replace('*', '')
+    guess = guess.replace('__', '')
     acc = ''
     next_marked = False
     for i, c in enumerate(guess):
@@ -95,14 +96,14 @@ if __name__ == '__main__':
             print(f"Guess {turn}: ", end='')
             guess = input().lower()
 
-        guess.replace("__", "*")
+        guess = guess.replace("__", "*")
 
         known_positions_ = known_positions_from_guess(guess)
         included_characters_ = included_characters_from_guess(guess)
         excluded_characters_ = excluded_characters_from_guess(guess)
         excluded_positions_ = excluded_positions_from_guess(guess)
 
-        # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
+        print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
 
         known_positions = combine_known_positions(known_positions, known_positions_)
         included_characters += included_characters_
