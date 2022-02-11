@@ -103,14 +103,14 @@ if __name__ == '__main__':
         excluded_characters_ = excluded_characters_from_guess(guess)
         excluded_positions_ = excluded_positions_from_guess(guess)
 
-        print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
+        # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
 
         known_positions = combine_known_positions(known_positions, known_positions_)
         included_characters += included_characters_
         excluded_characters += excluded_characters_
         excluded_positions = combine_excluded_positions(excluded_positions, excluded_positions_)
 
-        print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
+        # print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
 
         matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions)
 
