@@ -15,19 +15,11 @@ usage: `helper.py known_positions included_characters excluded_characters`
 
 ### `play.py`
 
-Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__).
+Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__). See example below.
 
 ## Examples
 
-### Example run with `o` locked in, `r` in an unknown location, and the letters `canepilt` not contained.
-
-`python helper.py ---o- r canepilt`
-
-### Example run with `o` locked in, `r` in an unknown location, and the letters `canepilt` not contained, and `r` is not in the first position.
-
-`python helper.py ---o- r canepilt r----`
-
-### Example of wordle and matching command:
+Example of wordle and matching command:
 
 <img src="https://user-images.githubusercontent.com/53503018/153552829-753d0ffd-82ac-4fc2-8e89-19a4a796104c.jpeg" width="50%"></img>
 
