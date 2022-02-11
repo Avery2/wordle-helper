@@ -16,3 +16,7 @@ Example run with `o` locked in, `r` in an unknown location, and the letters `can
 Example run with `o` locked in, `r` in an unknown location, and the letters `canepilt` not contained, and `r` is not in the first position.
 
 `python helper.py ---o- r canepilt r----`
+
+Example of wordle matched with command:
+
+`python helper.py ----- cre an c,er,r,c,e`
