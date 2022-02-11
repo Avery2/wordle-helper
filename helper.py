@@ -24,6 +24,12 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
 
 def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions=None):
     """Returns filtered possible words using parameters"""
+
+    if included_characters == '-':
+        included_characters = ''
+    if excluded_characters == '-':
+        excluded_characters = ''
+
     # exclude excluded characters and require known positions
     matches = list(filter(match_known_positions_exclude_characters(known_positions, excluded_characters), possible_words))
     # require included characters
