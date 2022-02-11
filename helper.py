@@ -2,26 +2,35 @@ import re
 import sys
 
 
-def allowed_positiions_only(word, excluded_positions):
+def allowed_positions_only(word, excluded_positions):
+    """Returns if a word doesn't use particular characters in the excluded positions"""
     for ch, ex in zip(word, excluded_positions):
         if ch in ex:
             return False
     return True
 
-def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions):
+def uses_included_characters(word, included_characters):
+    """Returns if a word uses all included characters"""
+    return False not in [c in word for c in included_characters]
+
+def match_known_positions_exclude_characters(known_positions, excluded_characters):
+    """returns function that takes a word and returns if it uses the known positions and doesn't use the excluded characters"""
     # filter possible words
     all_possible_chars = set('abcdefghijklmnopqrstuvwxyz')
     possible_chars = ''.join(list(all_possible_chars - excluded_characters))
     re_str = known_positions.replace('-', f'[{possible_chars}]')
     r = re.compile(re_str)
+    return r.match
+
+def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions):
 
     # exclude excluded characters
-    matches = list(filter(r.match, possible_words))
+    matches = list(filter(match_known_positions_exclude_characters(known_positions), possible_words))
     # require included characters
-    matches = list(filter(lambda x: False not in [e in x for e in included_characters], matches))
+    matches = list(filter(lambda x: uses_included_characters(x, included_characters), matches))
     # filter excluded positions
     if excluded_positions:
-        matches = list(filter(lambda x: allowed_positiions_only(x, excluded_positions), matches))
+        matches = list(filter(lambda x: allowed_positions_only(x, excluded_positions), matches))
     
     return matches
 
