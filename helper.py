@@ -9,9 +9,11 @@ def allowed_positions_only(word, excluded_positions):
             return False
     return True
 
+
 def uses_included_characters(word, included_characters):
     """Returns if a word uses all included characters"""
     return False not in [c in word for c in included_characters]
+
 
 def match_known_positions_exclude_characters(known_positions, excluded_characters):
     """returns function that takes a word and returns if it uses the known positions and doesn't use the excluded characters"""
@@ -22,8 +24,13 @@ def match_known_positions_exclude_characters(known_positions, excluded_character
     r = re.compile(re_str)
     return r.match
 
-def filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions=None):
+
+def filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions=None, possible_words=None):
     """Returns filtered possible words using parameters"""
+
+    if possible_words == None:
+        with open("possible_words.txt") as possible_words_file:
+            possible_words = [x.strip() for x in possible_words_file.readlines()]
 
     if included_characters == '-':
         included_characters = ''
@@ -37,8 +44,9 @@ def filter_possible_words(possible_words, known_positions, included_characters, 
     # filter excluded positions
     if excluded_positions:
         matches = list(filter(lambda x: allowed_positions_only(x, excluded_positions), matches))
-    
+
     return matches
+
 
 if __name__ == '__main__':
     # read file
@@ -71,7 +79,7 @@ if __name__ == '__main__':
         exit(1)
 
     # filter words
-    matches = filter_possible_words(possible_words, known_positions, included_characters, excluded_characters, excluded_positions)
+    matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions, possible_words)
 
     # output to user
     print(f"Show {len(matches)} possible words? [y/n] ", end='')
