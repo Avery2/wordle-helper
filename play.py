@@ -39,7 +39,8 @@ def excluded_characters_from_guess(guess):
 def included_characters_from_guess(guess):
     ex = excluded_characters_from_guess(guess)
     s = set(guess.replace('*', '').replace('_', '')) - set(ex)
-    return '-' if not s else s
+    s = ''.join([c for c in s])
+    return s
 
 
 def excluded_positions_from_guess(guess):
@@ -54,12 +55,16 @@ def excluded_positions_from_guess(guess):
         if not next_marked:
             acc += ','
     acc = acc.replace('_', '')
-    return '-' if not acc else acc[:-1]
+    return acc[:-1]
 
 
 def combine_excluded_positions(p1, p2):
-    acc = ''
-    return acc
+    acc = []
+    p1 = p1.split(',')
+    p2 = p2.split(',')
+    for a,b in zip(p1, p2):
+        acc.append(a + b)
+    return ','.join(acc)
 
 
 def combine_known_positions(pos1, pos2):
@@ -79,6 +84,11 @@ if __name__ == '__main__':
 
     print("Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__)")
 
+    known_positions = '-----'
+    included_characters = ''
+    excluded_characters = ''
+    excluded_positions = ',,,,'
+
     for turn in range(6):
         guess = ''
         while len(guess.replace("_", "")) != 5:
@@ -87,10 +97,17 @@ if __name__ == '__main__':
 
         guess.replace("__", "*")
 
-        known_positions = known_positions_from_guess(guess)
-        included_characters = included_characters_from_guess(guess)
-        excluded_characters = excluded_characters_from_guess(guess)
-        excluded_positions = excluded_positions_from_guess(guess)
+        known_positions_ = known_positions_from_guess(guess)
+        included_characters_ = included_characters_from_guess(guess)
+        excluded_characters_ = excluded_characters_from_guess(guess)
+        excluded_positions_ = excluded_positions_from_guess(guess)
+
+        # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
+
+        known_positions = combine_known_positions(known_positions, known_positions_)
+        included_characters += included_characters_
+        excluded_characters += excluded_characters_
+        excluded_positions = combine_excluded_positions(excluded_positions, excluded_positions_)
 
         print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
 

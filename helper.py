@@ -45,6 +45,7 @@ def filter_possible_words(known_positions, included_characters, excluded_charact
     if excluded_positions:
         matches = list(filter(lambda x: allowed_positions_only(x, excluded_positions), matches))
 
+    matches.sort(key=lambda x: (-len(set(x)), x))
     return matches
 
 
