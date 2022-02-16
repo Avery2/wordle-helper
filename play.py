@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
     turn = 0
     while turn < 6:
-        print("Make guess (1) or use utility (2)? [1/2]")
+        print("Make guess (1) or use utility (2)? [1/2] ", end="")
         choice = int(input().strip())
 
         if choice == 1:
@@ -141,12 +141,15 @@ if __name__ == '__main__':
             turn += 1
         elif choice == 2:
             print("[Only one utility currently available]")
-            print("Choose characters that must be included in the word.")
+            print("Choose characters that must be included in the word. ", end="")
             include_characters = input().strip()
             matches = find_words(include_characters)
-            print(f"Show {len(matches)} possible words? [y/n] ", end='')
-            if input().strip().lower() in ('yes', 'y'):
-                print(*matches, sep="\n")
+            if len(matches) > 0:
+                print(f"Show {len(matches)} possible words? [y/n] ", end='')
+                if input().strip().lower() in ('yes', 'y'):
+                    print(*matches, sep="\n")
+            else:
+                print("No possible words")
 
         else:
             print("Invalid option.")

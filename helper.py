@@ -52,7 +52,7 @@ def filter_possible_words(known_positions, included_characters, excluded_charact
 
 def find_words(include_characters, possible_words=None):
     if possible_words == None:
-        with open("possible_words.txt") as possible_words_file:
+        with open("allowed_words.txt") as possible_words_file:
             possible_words = [x.strip() for x in possible_words_file.readlines()]
     
     matches = list(filter(lambda x: all([c in x for c in include_characters]), possible_words))
