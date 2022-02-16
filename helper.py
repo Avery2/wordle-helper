@@ -50,6 +50,15 @@ def filter_possible_words(known_positions, included_characters, excluded_charact
     matches.sort(key=lambda x: (-len(set(x)), x))
     return matches
 
+def find_words(include_characters, possible_words=None):
+    if possible_words == None:
+        with open("possible_words.txt") as possible_words_file:
+            possible_words = [x.strip() for x in possible_words_file.readlines()]
+    
+    matches = list(filter(lambda x: all([c in x for c in include_characters]), possible_words))
+    matches.sort(key=lambda x: (-len(set(x)), x))
+    return matches
+
 
 if __name__ == '__main__':
     # read file

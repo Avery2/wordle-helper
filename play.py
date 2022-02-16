@@ -1,4 +1,4 @@
-from helper import filter_possible_words
+from helper import filter_possible_words, find_words
 
 
 # def setGreen():
@@ -90,31 +90,63 @@ if __name__ == '__main__':
     excluded_characters = ''
     excluded_positions = ',,,,'
 
-    for turn in range(6):
-        guess = ''
-        while len(guess.replace("_", "")) != 5:
-            print(f"Guess {turn}: ", end='')
-            guess = input().lower()
+    turn = 0
+    while turn < 6:
+        print("Make guess (1) or use utility (2)? [1/2]")
+        choice = int(input().strip())
 
-        guess = guess.replace("__", "*")
+        if choice == 1:
+            guess = ''
+            while len(guess.replace("_", "")) != 5:
+                print(f"Guess {turn}: ", end='')
+                guess = input().lower()
 
-        known_positions_ = known_positions_from_guess(guess)
-        included_characters_ = included_characters_from_guess(guess)
-        excluded_characters_ = excluded_characters_from_guess(guess)
-        excluded_positions_ = excluded_positions_from_guess(guess)
+            guess = guess.replace("__", "*")
 
-        # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
+            known_positions_ = known_positions_from_guess(guess)
+            included_characters_ = included_characters_from_guess(guess)
+            excluded_characters_ = excluded_characters_from_guess(guess)
+            excluded_positions_ = excluded_positions_from_guess(guess)
 
-        known_positions = combine_known_positions(known_positions, known_positions_)
-        included_characters += included_characters_
-        excluded_characters += excluded_characters_
-        excluded_positions = combine_excluded_positions(excluded_positions, excluded_positions_)
+            # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
 
-        # print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
+            known_positions = combine_known_positions(known_positions, known_positions_)
+            included_characters += included_characters_
+            excluded_characters += excluded_characters_
+            excluded_positions = combine_excluded_positions(excluded_positions, excluded_positions_)
 
-        matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions)
+            # print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
 
-        # output to user
-        print(f"Show {len(matches)} possible words? [y/n] ", end='')
-        if input().strip().lower() in ('yes', 'y'):
-            print(*matches, sep="\n")
+            matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions)
+
+            inc_c = set(included_characters)
+            s = ''.join(matches)
+            all_c = set(s)
+            d = sorted([(k,s.count(k)) for k in all_c - inc_c], key=lambda x: (x[1], x[0]), reverse=True)
+
+            # output to user
+            if len(matches) > 0:
+                print(f"Show {len(matches)} possible words? [y/n] ", end='')
+                if input().strip().lower() in ('yes', 'y'):
+                    print(*matches, sep="\n")
+            else:
+                print("No possible words")
+            if len(d) > 0:
+                print(f"Show {len(d)} unused character frequencies? [y/n] ", end='')
+                if input().strip().lower() in ('yes', 'y'):
+                    print(*d, sep="\n")
+            else:
+                print("No unused characters")
+            
+            turn += 1
+        elif choice == 2:
+            print("[Only one utility currently available]")
+            print("Choose characters that must be included in the word.")
+            include_characters = input().strip()
+            matches = find_words(include_characters)
+            print(f"Show {len(matches)} possible words? [y/n] ", end='')
+            if input().strip().lower() in ('yes', 'y'):
+                print(*matches, sep="\n")
+
+        else:
+            print("Invalid option.")
