@@ -1,4 +1,5 @@
 from helper import filter_possible_words, find_words
+import sys
 
 
 # def setGreen():
@@ -9,6 +10,16 @@ from helper import filter_possible_words, find_words
 # def setYellow():
 #     YELLOW = "\u001b[33m"
 #     print(YELLOW, end='')
+
+# def printOverwrite(s: str) -> None:
+#     """Prints something onn the same line, overwriting that was last written. Useful for a recurring value like a loading bar."""
+
+#     def moveleft(n=1000) -> str:
+#         """Returns unicode string to move cursor left by n"""
+#         return u"\u001b[{}D".format(n)
+
+#     sys.stdout.write(moveleft() + s)
+#     sys.stdout.flush()
 
 
 def known_positions_from_guess(guess):
