@@ -20,6 +20,17 @@ import sys
 
 #     sys.stdout.write(moveleft() + s)
 #     sys.stdout.flush()
+# def setGreen():
+#     GREEN = "\u001b[32m"
+#     print(GREEN, end='')
+
+# def setYellow():
+#     YELLOW = "\u001b[33m"
+#     print(YELLOW, end='')
+
+# def reset():
+#     ANSI_RESET = "\u001B[0m"
+#     print(ANSI_RESET, end='')
 
 
 def known_positions_from_guess(guess):
