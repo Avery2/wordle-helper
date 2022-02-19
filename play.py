@@ -1,15 +1,19 @@
+from shutil import move
 from helper import filter_possible_words, find_words
 import sys
 
 
-# def setGreen():
-#     GREEN = "\u001b[32m"
-#     print(GREEN, end='')
+def setGreen():
+    GREEN = "\u001b[32m"
+    print(GREEN, end='')
 
+def setYellow():
+    YELLOW = "\u001b[33m"
+    print(YELLOW, end='')
 
-# def setYellow():
-#     YELLOW = "\u001b[33m"
-#     print(YELLOW, end='')
+def moveleft(n=1000):
+    """Returns unicode string to move cursor left by n"""
+    return u"\u001b[{}D".format(n)
 
 # def printOverwrite(s: str) -> None:
 #     """Prints something onn the same line, overwriting that was last written. Useful for a recurring value like a loading bar."""
@@ -105,7 +109,7 @@ def combine_known_positions(pos1, pos2):
 
 if __name__ == '__main__':
 
-    print("Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__)")
+    # print("Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__)")
 
     known_positions = '-----'
     included_characters = ''
@@ -114,7 +118,7 @@ if __name__ == '__main__':
 
     turn = 0
     while turn < 6:
-        print("Make guess (1) or use utility (2)? [1/2] ", end="")
+        print("Make guess (1) or use utility (2)? ", end="")
         choice = int(input().strip())
 
         if choice == 1:
@@ -162,7 +166,7 @@ if __name__ == '__main__':
             
             turn += 1
         elif choice == 2:
-            print("[Only one utility currently available]")
+            # print("[Only one utility currently available]")
             print("Choose characters that must be included in the word. ", end="")
             include_characters = input().strip()
             matches = find_words(include_characters)
@@ -172,6 +176,5 @@ if __name__ == '__main__':
                     print(*matches, sep="\n")
             else:
                 print("No possible words")
-
         else:
             print("Invalid option.")
