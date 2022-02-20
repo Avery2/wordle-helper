@@ -177,6 +177,7 @@ if __name__ == '__main__':
                 ns += getColor(x) + key
 
                 print(" " + ns, end = '\r')
+                print(RESET, end='')
 
                 oldKey = key
 
