@@ -150,6 +150,10 @@ if __name__ == '__main__':
                 #get keypress
                 key = getKey()
 
+                #pop last word if backspace
+                if (key == '\b' and len(c_list) > 0):
+                    c_list.pop()
+
                 #if its enter key, add the key onto string
                 if (key == '\r' and oldKey != '\r'):
                     c_list.append((oldKey, getColor(x)))
@@ -174,7 +178,11 @@ if __name__ == '__main__':
                     x = 0
 
                 #print new key
-                ns += getColor(x) + key
+                if (key != '\b'):
+                    ns += getColor(x) + key
+
+                #flush spaces after (for backspace)
+                ns += "\0" * (5 - len(c_list))
 
                 print(" " + ns, end = '\r')
                 print(RESET, end='')
