@@ -17,7 +17,7 @@ usage: `helper.py known_positions included_characters excluded_characters`
 
 ### `play.py`
 
-Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__). See example below.
+Type the response for each wordle guess. Press the same character multiple times to change it's color. Press enter to lock in that character.
 
 ## Examples
 
