@@ -1,6 +1,12 @@
+import os
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import sys, tty, termios
+
 from shutil import move
 from helper import filter_possible_words, find_words
-import sys
 
 
 def setGreen():
@@ -14,27 +20,6 @@ def setYellow():
 def moveleft(n=1000):
     """Returns unicode string to move cursor left by n"""
     return u"\u001b[{}D".format(n)
-
-# def printOverwrite(s: str) -> None:
-#     """Prints something onn the same line, overwriting that was last written. Useful for a recurring value like a loading bar."""
-
-#     def moveleft(n=1000) -> str:
-#         """Returns unicode string to move cursor left by n"""
-#         return u"\u001b[{}D".format(n)
-
-#     sys.stdout.write(moveleft() + s)
-#     sys.stdout.flush()
-# def setGreen():
-#     GREEN = "\u001b[32m"
-#     print(GREEN, end='')
-
-# def setYellow():
-#     YELLOW = "\u001b[33m"
-#     print(YELLOW, end='')
-
-# def reset():
-#     ANSI_RESET = "\u001B[0m"
-#     print(ANSI_RESET, end='')
 
 
 def known_positions_from_guess(guess):
@@ -106,6 +91,42 @@ def combine_known_positions(pos1, pos2):
         acc += '-'
     return acc
 
+##ERIC FUCNTION's
+
+RESET = '\x1b[0m'
+GREEN = '\u001b[32m'
+YELLOW = '\u001b[33m'
+GREY = "\u001B[0m"
+
+def getColor(x):
+    if(x == 0): return RESET
+    if(x == 1): return YELLOW
+    if(x == 2): return GREEN
+
+def getKey():
+    if os.name == "nt":
+        return msvcrt.getch().decode("utf-8")
+    else:
+        #https://code.activestate.com/recipes/134892-getch-like-unbuffered-character-reading-from-stdin/
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+def conv2avry(list):
+    ret = ""
+    for let, color in list:
+        if color == GREY:
+            ret += let
+        elif color == YELLOW:
+            ret += "_" + let
+        elif color == GREEN:
+            ret += "*" + let
+    return ret
 
 if __name__ == '__main__':
 
@@ -122,12 +143,52 @@ if __name__ == '__main__':
         choice = int(input().strip())
 
         if choice == 1:
-            guess = ''
-            while len(guess.replace("_", "")) != 5:
-                print(f"Guess {turn}: ", end='')
-                guess = input().lower()
+            x = 0
+            oldKey = ""
+            c_list = []
+            while True:
+                #get keypress
+                key = getKey()
 
-            guess = guess.replace("__", "*")
+                #if its enter key, add the key onto string
+                if (key == '\r' and oldKey != '\r'):
+                    c_list.append((oldKey, getColor(x)))
+                    x = 0 #reset color 
+                    oldKey = ""
+                    if len(c_list) == 5:
+                        #flush output
+                        print (RESET, end = '\n')
+                        break
+                    else:
+                        continue
+
+                #make a new string for all chars + colors
+                ns = ""
+                for char, color in c_list:
+                    ns += color + char + RESET
+
+                #if same key was pressed, update color
+                if oldKey == key:
+                    x = (x + 1) % 3
+                else:
+                    x = 0
+
+                #print new key
+                ns += getColor(x) + key
+
+                print(" " + ns, end = '\r')
+
+                oldKey = key
+
+            guess = conv2avry(c_list)
+
+            #get input of 5 length
+            # while len(guess.replace("_", "")) != 5:
+            #     print(f"Guess {turn}: ", end='')
+            #     guess = input().lower()
+
+            #replace __ to * to indicate green
+            # guess = guess.replace("__", "*")
 
             known_positions_ = known_positions_from_guess(guess)
             included_characters_ = included_characters_from_guess(guess)
