@@ -185,6 +185,7 @@ if __name__ == '__main__':
                 ns += "\0" * (5 - len(c_list))
 
                 print(" " + ns, end = '\r')
+                print(RESET, end='')
 
                 oldKey = key
 
