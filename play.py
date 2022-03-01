@@ -139,8 +139,14 @@ if __name__ == '__main__':
 
     turn = 0
     while turn < 6:
-        print("Make guess (1) or use utility (2)? ", end="")
-        choice = int(input().strip())
+        print("Make guess (1), use utility (2), or quit (q): ", end="")
+        try:
+            choice = input().strip()
+            if choice.lower() in ("q", "quit"):
+                break
+            choice = int(choice)
+        except:
+            continue
 
         if choice == 1:
             x = 0
