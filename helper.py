@@ -1,5 +1,6 @@
 import re
 import sys
+from tkinter.tix import Tree
 
 
 def allowed_positions_only(word, excluded_positions):
@@ -47,8 +48,18 @@ def filter_possible_words(known_positions, included_characters, excluded_charact
     if excluded_positions:
         matches = list(filter(lambda x: allowed_positions_only(x, excluded_positions), matches))
 
-    matches.sort(key=lambda x: (-len(set(x)), x))
-    return matches
+    d = {
+        m: (
+            sum([sum([1 if c in m else 0 for m in matches]) for c in set(m) - set(included_characters)]), 
+            sum([any([1 if c in m else 0 for m in matches]) for c in set(m) - set(included_characters)]),
+        ) for m in matches
+    }
+    l = sorted(list(d.items()), key=lambda x: (x[1], x[0]), reverse=True)
+
+    # print(*l, sep="\n")
+
+    matches.sort(key=lambda x: (d[x][1], -len(set(x)), x)) # sort by number of words that the guess gives information on, the number of unique characters, and then just the word itself
+    return matches, l
 
 def find_words(include_characters, possible_words=None):
     if possible_words == None:
@@ -90,9 +101,9 @@ if __name__ == '__main__':
         exit(1)
 
     # filter words
-    matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions, possible_words)
+    matches, l = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions, possible_words)
 
     # output to user
     print(f"Show {len(matches)} possible words? [y/n] ", end='')
     if input().strip().lower() in ('yes', 'y'):
-        print(*matches, sep="\n")
+        print(*l, sep="\n")

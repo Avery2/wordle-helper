@@ -184,7 +184,7 @@ def getGuess():
     return conv2avry(c_list)
 
 
-def find_matches(guess):
+def find_matches(guess, known_positions, included_characters, excluded_characters, excluded_positions):
     """Returns matches and dictionary of unused characters"""
     known_positions_ = known_positions_from_guess(guess)
     included_characters_ = included_characters_from_guess(guess)
@@ -198,23 +198,24 @@ def find_matches(guess):
         excluded_positions, excluded_positions_
     )
 
-    matches = filter_possible_words(
+    matches, l = filter_possible_words(
         known_positions,
         included_characters,
         excluded_characters,
         excluded_positions,
     )
 
+    # calculate unused word dictonary
     inc_c = set(included_characters)
     s = "".join(matches)
     all_c = set(s)
     unused_characters = sorted(
-        [(k, s.count(k)) for k in all_c - inc_c],
+        [(c, sum([1 if c in m else 0 for m in matches])) for c in all_c - inc_c], # results in list of tuples where first value is some character and the second value is the number of words it is in (from matches)
         key=lambda x: (x[1], x[0]),
         reverse=True,
     )
 
-    return matches, unused_characters
+    return matches, l, unused_characters, known_positions, included_characters, excluded_characters, excluded_positions
 
 
 def find_words_using_characters():
@@ -249,13 +250,15 @@ if __name__ == "__main__":
 
         if choice == 1:
             guess = getGuess()
-            matches, unused_characters = find_matches(guess)
+            matches, l, unused_characters, known_positions, included_characters, excluded_characters, excluded_positions = find_matches(guess, known_positions, included_characters, excluded_characters, excluded_positions)
 
             # output matches
             if len(matches) > 0:
                 print(f"Show {len(matches)} possible words? [y/n] ", end="")
                 if input().strip().lower() in ("yes", "y"):
-                    print(*matches, sep="\n")
+                    # print(*l, sep="\n")
+                    for (word, (num_overlap_char, num_overlap_word)) in l:
+                        print(f"{word}: {num_overlap_word} {num_overlap_char}")
             else:
                 print("No possible words")
 
