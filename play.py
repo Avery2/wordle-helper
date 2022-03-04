@@ -11,103 +11,109 @@ from helper import filter_possible_words, find_words
 
 def setGreen():
     GREEN = "\u001b[32m"
-    print(GREEN, end='')
+    print(GREEN, end="")
+
 
 def setYellow():
     YELLOW = "\u001b[33m"
-    print(YELLOW, end='')
+    print(YELLOW, end="")
+
 
 def moveleft(n=1000):
     """Returns unicode string to move cursor left by n"""
-    return u"\u001b[{}D".format(n)
+    return "\u001b[{}D".format(n)
 
 
 def known_positions_from_guess(guess):
-    guess = guess.replace('_', '')
-    acc = ''
+    guess = guess.replace("_", "")
+    acc = ""
     next_marked = False
     for c in guess:
         if next_marked:
             acc += c
             next_marked = False
-        elif c not in ('*', '_'):
-            acc += '-'
-        next_marked = c == '*'
+        elif c not in ("*", "_"):
+            acc += "-"
+        next_marked = c == "*"
     return acc
 
 
 def excluded_characters_from_guess(guess):
-    acc = ''
+    acc = ""
     next_marked = False
     for c in guess:
-        if not next_marked and c not in ('*', '_'):
+        if not next_marked and c not in ("*", "_"):
             acc += c
             next_marked = False
-        next_marked = c in ('*', '_')
+        next_marked = c in ("*", "_")
     return acc
 
 
 def included_characters_from_guess(guess):
     ex = excluded_characters_from_guess(guess)
-    s = set(guess.replace('*', '').replace('_', '')) - set(ex)
-    s = ''.join([c for c in s])
+    s = set(guess.replace("*", "").replace("_", "")) - set(ex)
+    s = "".join([c for c in s])
     return s
 
 
 def excluded_positions_from_guess(guess):
-    guess = guess.replace('*', '')
-    guess = guess.replace('__', '')
-    acc = ''
+    guess = guess.replace("*", "")
+    guess = guess.replace("__", "")
+    acc = ""
     next_marked = False
     for i, c in enumerate(guess):
         if next_marked:
             acc += c
             next_marked = False
-        next_marked = c == '_'
+        next_marked = c == "_"
         if not next_marked:
-            acc += ','
-    acc = acc.replace('_', '')
+            acc += ","
+    acc = acc.replace("_", "")
     return acc[:-1]
 
 
 def combine_excluded_positions(p1, p2):
     acc = []
-    p1 = p1.split(',')
-    p2 = p2.split(',')
-    for a,b in zip(p1, p2):
+    p1 = p1.split(",")
+    p2 = p2.split(",")
+    for a, b in zip(p1, p2):
         acc.append(a + b)
-    return ','.join(acc)
+    return ",".join(acc)
 
 
 def combine_known_positions(pos1, pos2):
-    acc = ''
+    acc = ""
     for a, b in zip(pos1, pos2):
-        if a != '-':
+        if a != "-":
             acc += a
             continue
-        if b != '-':
+        if b != "-":
             acc += b
             continue
-        acc += '-'
+        acc += "-"
     return acc
 
-##ERIC FUCNTION's
 
-RESET = '\x1b[0m'
-GREEN = '\u001b[32m'
-YELLOW = '\u001b[33m'
+RESET = "\x1b[0m"
+GREEN = "\u001b[32m"
+YELLOW = "\u001b[33m"
 GREY = "\u001B[0m"
 
+
 def getColor(x):
-    if(x == 0): return RESET
-    if(x == 1): return YELLOW
-    if(x == 2): return GREEN
+    if x == 0:
+        return RESET
+    if x == 1:
+        return YELLOW
+    if x == 2:
+        return GREEN
+
 
 def getKey():
     if os.name == "nt":
         return msvcrt.getch().decode("utf-8")
     else:
-        #https://code.activestate.com/recipes/134892-getch-like-unbuffered-character-reading-from-stdin/
+        # https://code.activestate.com/recipes/134892-getch-like-unbuffered-character-reading-from-stdin/
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -116,6 +122,7 @@ def getKey():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
+
 
 def conv2avry(list):
     ret = ""
@@ -128,14 +135,106 @@ def conv2avry(list):
             ret += "*" + let
     return ret
 
-if __name__ == '__main__':
 
-    # print("Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__)")
+def getGuess():
+    x = 0
+    oldKey = ""
+    c_list = []
+    while True:
+        # get keypress
+        key = getKey()
 
-    known_positions = '-----'
-    included_characters = ''
-    excluded_characters = ''
-    excluded_positions = ',,,,'
+        # pop last word if backspace
+        if key == "\b" and len(c_list) > 0:
+            c_list.pop()
+
+        # if its enter key, add the key onto string
+        if key == "\r" and oldKey != "\r":
+            c_list.append((oldKey, getColor(x)))
+            x = 0  # reset color
+            oldKey = ""
+            if len(c_list) == 5:
+                # flush output
+                print(RESET, end="\n")
+                break
+            else:
+                continue
+        # make a new string for all chars + colors
+        ns = ""
+        for char, color in c_list:
+            ns += color + char + RESET
+
+        # if same key was pressed, update color
+        if oldKey == key:
+            x = (x + 1) % 3
+        else:
+            x = 0
+
+        # print new key
+        if key != "\b":
+            ns += getColor(x) + key
+
+        # flush spaces after (for backspace)
+        ns += "\0" * (5 - len(c_list))
+
+        print(" " + ns, end="\r")
+        print(RESET, end="")
+
+        oldKey = key
+    return conv2avry(c_list)
+
+
+def find_matches(guess):
+    """Returns matches and dictionary of unused characters"""
+    known_positions_ = known_positions_from_guess(guess)
+    included_characters_ = included_characters_from_guess(guess)
+    excluded_characters_ = excluded_characters_from_guess(guess)
+    excluded_positions_ = excluded_positions_from_guess(guess)
+
+    known_positions = combine_known_positions(known_positions, known_positions_)
+    included_characters += included_characters_
+    excluded_characters += excluded_characters_
+    excluded_positions = combine_excluded_positions(
+        excluded_positions, excluded_positions_
+    )
+
+    matches = filter_possible_words(
+        known_positions,
+        included_characters,
+        excluded_characters,
+        excluded_positions,
+    )
+
+    inc_c = set(included_characters)
+    s = "".join(matches)
+    all_c = set(s)
+    unused_characters = sorted(
+        [(k, s.count(k)) for k in all_c - inc_c],
+        key=lambda x: (x[1], x[0]),
+        reverse=True,
+    )
+
+    return matches, unused_characters
+
+
+def find_words_using_characters():
+    print("Choose characters that must be included in the word. ", end="")
+    include_characters = input().strip()
+    matches = find_words(include_characters)
+    if len(matches) > 0:
+        print(f"Show {len(matches)} possible words? [y/n] ", end="")
+        if input().strip().lower() in ("yes", "y"):
+            print(*matches, sep="\n")
+    else:
+        print("No possible words")
+
+
+if __name__ == "__main__":
+
+    known_positions = "-----"
+    included_characters = ""
+    excluded_characters = ""
+    excluded_positions = ",,,,"
 
     turn = 0
     while turn < 6:
@@ -149,108 +248,31 @@ if __name__ == '__main__':
             continue
 
         if choice == 1:
-            x = 0
-            oldKey = ""
-            c_list = []
-            while True:
-                #get keypress
-                key = getKey()
+            guess = getGuess()
+            matches, unused_characters = find_matches(guess)
 
-                #pop last word if backspace
-                if (key == '\b' and len(c_list) > 0):
-                    c_list.pop()
-
-                #if its enter key, add the key onto string
-                if (key == '\r' and oldKey != '\r'):
-                    c_list.append((oldKey, getColor(x)))
-                    x = 0 #reset color 
-                    oldKey = ""
-                    if len(c_list) == 5:
-                        #flush output
-                        print (RESET, end = '\n')
-                        break
-                    else:
-                        continue
-
-                #make a new string for all chars + colors
-                ns = ""
-                for char, color in c_list:
-                    ns += color + char + RESET
-
-                #if same key was pressed, update color
-                if oldKey == key:
-                    x = (x + 1) % 3
-                else:
-                    x = 0
-
-                #print new key
-                if (key != '\b'):
-                    ns += getColor(x) + key
-
-                #flush spaces after (for backspace)
-                ns += "\0" * (5 - len(c_list))
-
-                print(" " + ns, end = '\r')
-                print(RESET, end='')
-
-                oldKey = key
-
-            guess = conv2avry(c_list)
-
-            #get input of 5 length
-            # while len(guess.replace("_", "")) != 5:
-            #     print(f"Guess {turn}: ", end='')
-            #     guess = input().lower()
-
-            #replace __ to * to indicate green
-            # guess = guess.replace("__", "*")
-
-            known_positions_ = known_positions_from_guess(guess)
-            included_characters_ = included_characters_from_guess(guess)
-            excluded_characters_ = excluded_characters_from_guess(guess)
-            excluded_positions_ = excluded_positions_from_guess(guess)
-
-            # print(f"{known_positions_=} {included_characters_=} {excluded_characters_=} {excluded_positions_=}")
-
-            known_positions = combine_known_positions(known_positions, known_positions_)
-            included_characters += included_characters_
-            excluded_characters += excluded_characters_
-            excluded_positions = combine_excluded_positions(excluded_positions, excluded_positions_)
-
-            # print(f"{known_positions=} {included_characters=} {excluded_characters=} {excluded_positions=}")
-
-            matches = filter_possible_words(known_positions, included_characters, excluded_characters, excluded_positions)
-
-            inc_c = set(included_characters)
-            s = ''.join(matches)
-            all_c = set(s)
-            d = sorted([(k,s.count(k)) for k in all_c - inc_c], key=lambda x: (x[1], x[0]), reverse=True)
-
-            # output to user
+            # output matches
             if len(matches) > 0:
-                print(f"Show {len(matches)} possible words? [y/n] ", end='')
-                if input().strip().lower() in ('yes', 'y'):
+                print(f"Show {len(matches)} possible words? [y/n] ", end="")
+                if input().strip().lower() in ("yes", "y"):
                     print(*matches, sep="\n")
             else:
                 print("No possible words")
-            if len(d) > 0:
-                print(f"Show {len(d)} unused character frequencies? [y/n] ", end='')
-                if input().strip().lower() in ('yes', 'y'):
-                    print(*d, sep="\n")
+
+            # output unused characters
+            if len(unused_characters) > 0:
+                print(
+                    f"Show {len(unused_characters)} unused character frequencies? [y/n] ",
+                    end="",
+                )
+                if input().strip().lower() in ("yes", "y"):
+                    print(*unused_characters, sep="\n")
             else:
                 print("No unused characters")
-            
+
             turn += 1
         elif choice == 2:
-            # print("[Only one utility currently available]")
-            print("Choose characters that must be included in the word. ", end="")
-            include_characters = input().strip()
-            matches = find_words(include_characters)
-            if len(matches) > 0:
-                print(f"Show {len(matches)} possible words? [y/n] ", end='')
-                if input().strip().lower() in ('yes', 'y'):
-                    print(*matches, sep="\n")
-            else:
-                print("No possible words")
+            # words with character utility
+            find_words_using_characters()
         else:
             print("Invalid option.")
