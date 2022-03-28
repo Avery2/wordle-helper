@@ -1,5 +1,7 @@
 import os
 
+from soupsieve import match
+
 if os.name == "nt":
     import msvcrt
 else:
@@ -218,10 +220,15 @@ def find_matches(guess, known_positions, included_characters, excluded_character
     return matches, l, unused_characters, known_positions, included_characters, excluded_characters, excluded_positions
 
 
-def find_words_using_characters():
+def find_words_using_characters(unused_characters):
+    unused_characters = {k: v for k,v in unused_characters}
     print("Choose characters that must be included in the word. ", end="")
     include_characters = input().strip()
     matches = find_words(include_characters)
+    extra_characters = [set(match) - set(include_characters) for match in matches]
+    sort_matches = list(zip(matches, [sum(unused_characters[c] for c in m if c in unused_characters) for m in extra_characters]))
+    sort_matches.sort(key=lambda x: x[1], reverse=True)
+    matches = sort_matches
     if len(matches) > 0:
         print(f"Show {len(matches)} possible words? [y/n] ", end="")
         if input().strip().lower() in ("yes", "y"):
@@ -236,6 +243,7 @@ if __name__ == "__main__":
     included_characters = ""
     excluded_characters = ""
     excluded_positions = ",,,,"
+    unused_characters = []
 
     turn = 0
     while turn < 6:
@@ -276,6 +284,6 @@ if __name__ == "__main__":
             turn += 1
         elif choice == 2:
             # words with character utility
-            find_words_using_characters()
+            find_words_using_characters(unused_characters)
         else:
             print("Invalid option.")
