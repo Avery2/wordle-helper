@@ -2,9 +2,13 @@
 
 Words lists from [3b1b](https://github.com/3b1b/videos/tree/master/_2022/wordle).
 
-Warning: Docs are slightly out of date. Everything below is correct but there are undocumented features.
+**Warning: Docs are out of date. Everything below is correct but there are undocumented features.**
 
 ## Usage
+
+### `play.py` (calls `helper.py` under the hood)
+
+Type the response for each wordle guess. Press the same character multiple times to change it's color. Press enter to lock in that character.
 
 ### `helper.py`
 
@@ -15,11 +19,9 @@ usage: `helper.py known_positions included_characters excluded_characters`
 - `excluded_characters`: Characters that are excluded in the word in the form `xyz`. Use `-` if there are none.
 - `excluded_positions`: Characters with known positinois where they do not exist with `,` seperating each position such as `,x,y,,xy`
 
-### `play.py`
-
-Type the response for each wordle guess. Press the same character multiple times to change it's color. Press enter to lock in that character.
-
 ## Examples
+
+### `helper.py` example
 
 Example of wordle and matching command:
 
@@ -31,12 +33,6 @@ Show 1 possible words? [y/n] y
 ulcer
 ```
 
-```
-❯ python play.py
-Type the response for each wordle guess. Indicate yellow by prepending with one underscore (_) and indicate green by prepending with two underscores (__)
-Guess 0: _c_ran_e
-Show 10 possible words? [y/n] n
-Guess 1: p_e_r_ch
-Show 1 possible words? [y/n] y
-ulcer
-```
+### `play.py` example
+
+<img width="644" alt="image" src="https://user-images.githubusercontent.com/53503018/156823744-20321dd0-b1bb-4aee-b2c5-87188e444278.png">
